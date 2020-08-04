@@ -1,53 +1,29 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define MAXSIZE 301
+
 #include <iostream>
 using namespace std;
 
-int stairs[300];
+int arrayNum[MAXSIZE];
+int dp[MAXSIZE];
+int arraySize;
 
-int dp[300][1];
-int cycle(int size, int train)
+int Max(int n1, int n2)
 {
-	int value = stairs[size];
-	int a, b;
-	if (size >= 2 && train < 1)
-	{
-		if (dp[size - 1][train + 1] != 0)
-			a = dp[size - 1][train + 1];
-		else
-			a = dp[size - 1][train + 1] = cycle(size - 1, train + 1);
-		if (dp[size - 2][0] != 0)
-			b = dp[size - 2][0];
-		else
-			b = dp[size - 2][0] = cycle(size - 2, 0);
-		if (a > b)
-			value += a;
-		else
-			value += b;
-	}
-	else if (size >= 2)
-	{
-		if (dp[size - 2][0] != 0)
-			a = dp[size - 2][0];
-		else
-			a = dp[size - 2][0] = cycle(size - 2, 0);
-		value += a;
-	}
-	else if (size == 1 && train < 1)
-	{
-		if (dp[size - 1][train + 1])
-			a = dp[size - 1][train + 1];
-		else
-			a = dp[size - 1][train + 1] = cycle(size - 1, train + 1);
-		value += a;
-	}
-	return value;
+	return n1 > n2 ? n1 : n2;
 }
 
 int main()
 {
-	int size;
-	scanf("%d", &size);
-	for (int i = 0; i < size; i++)
-		scanf(" %d", &stairs[i]);
-	printf("%d\n", cycle(size - 1, 0));
+	scanf("%d", &arraySize);
+	for (int i = 0; i < arraySize; i++)
+		scanf(" %d", &arrayNum[i]);
+
+	dp[1] = arrayNum[1] + arrayNum[0];
+	dp[2] = Max(arrayNum[2] + arrayNum[1], arrayNum[2] + arrayNum[0]);
+	for (int i = 3; i < arraySize; i++)
+		dp[i] = Max(arrayNum[i] + arrayNum[i - 1] + dp[i - 3], arrayNum[i] + dp[i - 2]);
+	
+	printf("%d\n", dp[arraySize - 1]);
 	return 0;
-}
+}	
